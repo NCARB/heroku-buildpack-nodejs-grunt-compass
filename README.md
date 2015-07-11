@@ -27,6 +27,7 @@ Here's an overview of what this buildpack does:
 - Runs `npm rebuild` if `node_modules` is checked into version control.
 - Always runs `npm install` to ensure [npm script hooks](https://npmjs.org/doc/misc/npm-scripts.html) are executed.
 - Always runs `npm prune` after restoring cached modules to ensure cleanup of unused dependencies.
+- Installs a GIT_SSH_KEY to the ssh agent to allow for private bower repository access, if set.
 - Runs `grunt` if a Gruntfile (`Gruntfile.js`, `Gruntfile.coffee`or `grunt.js`) is found.
 - Doesn't install grunt-cli every time.
 - Installs `compass`, caching it for future use.
@@ -47,6 +48,12 @@ Or add this buildpack to your current app:
 Set the `NODE_ENV` environment variable (e.g. `development` or `production`):
 
     heroku config:set NODE_ENV=production
+    
+Set the `GIT_SSH_KEY` environment variable, if using private github repositories
+
+    ssh-keygen -t rsa -b 4096 -C "mygithubemail@example.com" -N "" -f key
+    pbcopy < key.pub # add public key to github, use cat key.pub if command not found
+    heroku config:set GIT_SSH_KEY=`cat key | base64 -w 0` -a my-heroku-app
 
 Create your Node.js app and add a Gruntfile named  `Gruntfile.js` (or `Gruntfile.coffee` if you want to use CoffeeScript, or `grunt.js` if you are using Grunt 0.3) with a `heroku` task:
 
@@ -79,6 +86,7 @@ Push to heroku
     -----> Restoring node_modules directory from cache
     -----> Pruning cached dependencies not specified in package.json
            npm WARN package.json mealgen@0.0.0 No repository field.
+    -----> Detected SSH key for git.  launching ssh-agent and loading key
     -----> Installing dependencies
            npm WARN package.json mealgen@0.0.0 No repository field.
     -----> Caching node_modules directory for future builds
