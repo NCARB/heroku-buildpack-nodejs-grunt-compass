@@ -100,7 +100,7 @@ fi
     status "Exporting config vars to environment"
     export_env_dir $env_dir
   fi
-  
+
   # https://github.com/tonycoco/heroku-buildpack-ember-cli/commit/10b575a25e0e4caf7524ac6c83aa7ea77647036b
   if [ "$GIT_SSH_KEY" != "" ]; then
     status "Detected SSH key for git.  launching ssh-agent and loading key"
@@ -120,7 +120,7 @@ fi
   status "Installing dependencies"
   # Make npm output to STDOUT instead of its default STDERR
   npm install --userconfig $build_dir/.npmrc --production 2>&1 | indent
-  
+
   if [ "$GIT_SSH_KEY" != "" ]; then
     # Now that npm & bower have finished running, we should not need the ssh key anymore.  Kill ssh-agent
     eval `ssh-agent -k`
@@ -171,11 +171,7 @@ fi
 
 # install compass
 status "Installing Compass"
-if [ "$STACK" == "cedar-14" ]; then
-  export GEM_HOME=$cache_dir/ruby/.gem/ruby/2.2.0
-else
-  export GEM_HOME=$cache_dir/ruby/.gem/ruby/1.9.1
-fi
+export GEM_HOME=$cache_dir/ruby/.gem/ruby/2.3.0
 PATH="$GEM_HOME/bin:$PATH"
 if test -d $cache_dir/ruby/.gem; then
   status "Restoring ruby gems directory from cache"
@@ -198,7 +194,7 @@ fi
 status "Building runtime environment"
 mkdir -p $build_dir/.profile.d
 echo "export PATH=\"\$HOME/vendor/node/bin:\$HOME/bin:\$HOME/node_modules/.bin:\$PATH\";" > $build_dir/.profile.d/nodejs.sh
-echo "export PATH=\"\$HOME/.gem/ruby/1.9.1/bin:\$PATH\"" > $build_dir/.profile.d/ruby.sh
+echo "export PATH=\"\$HOME/.gem/ruby/2.3.0/bin:\$PATH\"" > $build_dir/.profile.d/ruby.sh
 
 # Check and run Grunt
 (
